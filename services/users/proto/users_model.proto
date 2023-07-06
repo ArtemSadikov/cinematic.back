@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package users;
+
+option go_package="./;users";
+
+message User {
+  string id = 1;
+  UserProfile profile = 2;
+  google.protobuf.Timestamp createdAt = 4;
+  google.protobuf.Timestamp updatedAt = 5;
+  optional google.protobuf.Timestamp deletedAt = 6;
+}
+
+message UserProfile {
+  string username = 1;
+  string email = 2;
+}
+
+message UserWrite {
+  string email = 1;
+  string username = 2;
+}

@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:14.2
+    container_name: cinematic_backend-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_HOST: "localhost"
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: "cinematic"
+      POSTGRES_PASSWORD: "password"
