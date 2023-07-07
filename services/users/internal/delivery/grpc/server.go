@@ -5,9 +5,16 @@ import (
 )
 
 type Server struct {
-	uUseCase usecase.UsersUseCases
+	usersUC usecase.UsersUseCases
+	authUC  usecase.AuthUseCases
 }
 
-func New(service usecase.UsersUseCases) *Server {
-	return &Server{uUseCase: service}
+func New(
+	usersUC usecase.UsersUseCases,
+	authUC usecase.AuthUseCases,
+) *Server {
+	return &Server{
+		usersUC: usersUC,
+		authUC:  authUC,
+	}
 }

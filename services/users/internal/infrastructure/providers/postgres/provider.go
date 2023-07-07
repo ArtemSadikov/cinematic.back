@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"cinematic.back/pkg/postgres"
+	"cinematic.back/services/users/internal/domain/models/auth"
+	"cinematic.back/services/users/internal/domain/models/auth/token"
 	"cinematic.back/services/users/internal/domain/models/user"
 	"cinematic.back/services/users/internal/domain/models/user/profile"
 	"context"
@@ -34,8 +36,8 @@ func (p *Provider) Connect() error {
 		logger.Config{
 			SlowThreshold:             time.Second,
 			LogLevel:                  logger.Info,
-			IgnoreRecordNotFoundError: true,
-			ParameterizedQueries:      true,
+			IgnoreRecordNotFoundError: false,
+			ParameterizedQueries:      false,
 			Colorful:                  true,
 		},
 	)
@@ -63,6 +65,8 @@ func (p *Provider) Migrate(ctx context.Context) error {
 	err = migrator.AutoMigrate(
 		&user.User{},
 		&profile.Profile{},
+		&auth.UserAuth{},
+		&token.AuthToken{},
 	)
 	if err != nil {
 		return err

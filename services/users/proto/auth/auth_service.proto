@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+import "auth/auth_model.proto";
+
+package auth;
+
+option go_package = "./;auth";
+
+message AuthByCredentialsRequest {
+  UserCredentials credentials = 1;
+}
+
+message AuthByCredentialsResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message RegisterRequest {
+  UserCredentials credentials = 1;
+  string username = 2;
+}
+
+message RegisterResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message AuthByAccessTokenRequest {
+  string token = 1;
+}
+
+message OkResponse {
+  string message = 1;
+}
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+service AuthService {
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse) {};
+  rpc Register(RegisterRequest) returns (RegisterResponse) {};
+  rpc AuthByCredentials(AuthByCredentialsRequest) returns (AuthByCredentialsResponse) {};
+  rpc AuthByAccessToken(AuthByAccessTokenRequest) returns (OkResponse) {};
+}

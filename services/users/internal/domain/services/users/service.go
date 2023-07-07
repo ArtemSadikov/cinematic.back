@@ -2,7 +2,9 @@ package users
 
 import (
 	"cinematic.back/services/users/internal/domain/models/user"
+	"cinematic.back/services/users/internal/domain/models/user/profile"
 	"context"
+	"errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -46,4 +48,20 @@ func (s *service) DeleteByID(ctx context.Context, id uuid.UUID) (*user.User, err
 	}
 
 	return result, nil
+}
+
+func (s *service) FindByEmail(ctx context.Context, email string) (*user.User, error) {
+	var result user.User
+
+	err := s.db.WithContext(ctx).
+		InnerJoins("Profile", s.db.Where(&profile.Profile{Email: email})).
+		First(&result).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return &result, nil
+		}
+		return nil, err
+	}
+
+	return &result, nil
 }

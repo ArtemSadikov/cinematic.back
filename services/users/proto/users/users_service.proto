@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+import "users/users_model.proto";
+
+package users;
+
+option go_package="./;users";
+
+message CreateUserRequest {
+  UserWrite data = 1;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+message FindUserByIdRequest {
+  string id = 1;
+}
+
+message FindUserByIdResponse {
+  User user = 1;
+}
+
+message UpdateUserByIdRequest {
+  string id = 1;
+  UserWrite data = 2;
+}
+
+message UpdateUserByIdResponse {
+  User user = 1;
+}
+
+message DeleteUserByIdRequest {
+  string id = 1;
+}
+
+message DeleteUserByIdResponse {
+  User user = 1;
+}
+
+service UsersService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {};
+  rpc UpdateUser(UpdateUserByIdRequest) returns (UpdateUserByIdResponse) {};
+  rpc DeleteUser(DeleteUserByIdRequest) returns (DeleteUserByIdResponse) {};
+  rpc FindUserById(FindUserByIdRequest) returns (FindUserByIdResponse) {};
+}
