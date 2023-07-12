@@ -1,10 +1,11 @@
 syntax = "proto3";
 
-import "auth/auth_model.proto";
+import "auth_model.proto";
+import "users_model.proto";
 
 package auth;
 
-option go_package = "./;auth";
+option go_package = "cinematic.back/api/users/pb";
 
 message AuthByCredentialsRequest {
   UserCredentials credentials = 1;
@@ -29,8 +30,8 @@ message AuthByAccessTokenRequest {
   string token = 1;
 }
 
-message OkResponse {
-  string message = 1;
+message AuthByAccessTokenResponse {
+  users.User user = 1;
 }
 
 message RefreshTokenRequest {
@@ -46,5 +47,5 @@ service AuthService {
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse) {};
   rpc Register(RegisterRequest) returns (RegisterResponse) {};
   rpc AuthByCredentials(AuthByCredentialsRequest) returns (AuthByCredentialsResponse) {};
-  rpc AuthByAccessToken(AuthByAccessTokenRequest) returns (OkResponse) {};
+  rpc AuthByAccessToken(AuthByAccessTokenRequest) returns (AuthByAccessTokenResponse) {};
 }

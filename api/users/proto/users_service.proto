@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-import "users/users_model.proto";
+import "users_model.proto";
 
 package users;
 
-option go_package="./;users";
+option go_package = "cinematic.back/api/users/pb";
 
 message CreateUserRequest {
   UserWrite data = 1;

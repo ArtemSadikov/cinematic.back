@@ -1,0 +1,16 @@
+extend type Mutation {
+    me: User! @isLogged
+}
+
+type UserProfile {
+    email: String!
+    username: String!
+}
+
+type User {
+    id: String!
+    profile: UserProfile!
+    createdAt: Timestamp!
+    updatedAt: Timestamp!
+    deletedAt: Timestamp
+}

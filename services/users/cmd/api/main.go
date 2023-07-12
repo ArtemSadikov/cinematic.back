@@ -1,10 +1,9 @@
 package main
 
 import (
+	"cinematic.back/api/users/pb"
 	"cinematic.back/pkg/provider/database"
 	"cinematic.back/services/users/internal/delivery/grpc"
-	"cinematic.back/services/users/internal/delivery/grpc/interface/auth"
-	"cinematic.back/services/users/internal/delivery/grpc/interface/users"
 	container2 "cinematic.back/services/users/internal/infrastructure/container"
 	"cinematic.back/services/users/internal/usecase"
 	"context"
@@ -34,15 +33,15 @@ func main() {
 		var errCh chan error
 
 		server := grpc.New(uUseCase, aUseCase)
-		listener, err := net.Listen("tcp", "localhost:3000")
+		listener, err := net.Listen("tcp", "localhost:3001")
 		if err != nil {
 			log.Fatalf("%e", err)
 		}
 
 		grpcServer := grpc2.NewServer()
 
-		users.RegisterUsersServiceServer(grpcServer, server)
-		auth.RegisterAuthServiceServer(grpcServer, server)
+		pb.RegisterUsersServiceServer(grpcServer, server)
+		pb.RegisterAuthServiceServer(grpcServer, server)
 
 		go func() {
 			log.Println("server is listening on 3000 port")

@@ -126,21 +126,22 @@ func (u *UseCase) AuthByCredentials(ctx context.Context, email, password string)
 	return &tokens, nil
 }
 
-func (u *UseCase) AuthByAccessToken(ctx context.Context, token string) error {
+func (u *UseCase) AuthByAccessToken(ctx context.Context, token string) (*userModel.User, error) {
 	claims, err := u.tService.ValidateAccessToken(token)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	userId, err := uuid.Parse(claims.UserId)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if _, err = u.uService.FindByID(ctx, userId); err != nil {
-		return err
+	user, err := u.uService.FindByID(ctx, userId)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return user, nil
 }
 
 func NewUseCase(

@@ -4,7 +4,7 @@ import "google/protobuf/timestamp.proto";
 
 package users;
 
-option go_package="./;users";
+option go_package = "cinematic.back/api/users/pb";
 
 message User {
   string id = 1;

@@ -158,4 +158,5 @@ _xmsgs/
 # vendor/
 
 build/
-
+*gen*
+*.pb.go

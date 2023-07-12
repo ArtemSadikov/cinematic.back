@@ -1,14 +1,14 @@
 package mappers
 
 import (
-	users "cinematic.back/services/users/internal/delivery/grpc/interface/users"
+	"cinematic.back/api/users/pb"
 	"cinematic.back/services/users/internal/domain/models/user"
 	"cinematic.back/services/users/internal/domain/models/user/profile"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func MakeModelFromWriteData(data *users.UserWrite) user.User {
+func MakeModelFromWriteData(data *pb.UserWrite) user.User {
 	return user.User{
 		Profile: profile.Profile{
 			Email:    data.Email,
@@ -17,7 +17,7 @@ func MakeModelFromWriteData(data *users.UserWrite) user.User {
 	}
 }
 
-func MakeModelFromWriteDataWithId(data *users.UserWrite, id string) (user.User, error) {
+func MakeModelFromWriteDataWithId(data *pb.UserWrite, id string) (user.User, error) {
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
 		return user.User{}, err
@@ -29,10 +29,10 @@ func MakeModelFromWriteDataWithId(data *users.UserWrite, id string) (user.User, 
 	return model, nil
 }
 
-func MakeUserFromModel(model user.User) *users.User {
-	result := users.User{
+func MakeUserFromModel(model user.User) *pb.User {
+	result := pb.User{
 		Id: model.ID.String(),
-		Profile: &users.UserProfile{
+		Profile: &pb.UserProfile{
 			Username: model.Profile.Username,
 			Email:    model.Profile.Email,
 		},

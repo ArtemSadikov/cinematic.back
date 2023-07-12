@@ -1,0 +1,12 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+scalar Timestamp
+
+directive @isLogged on FIELD_DEFINITION
+
+type Mutation
+type Query {
+    sample: String!
+}

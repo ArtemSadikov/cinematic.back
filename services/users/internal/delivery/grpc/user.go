@@ -1,13 +1,13 @@
 package grpc
 
 import (
-	users "cinematic.back/services/users/internal/delivery/grpc/interface/users"
+	"cinematic.back/api/users/pb"
 	"cinematic.back/services/users/internal/delivery/grpc/mappers"
 	"context"
 	"github.com/google/uuid"
 )
 
-func (s *Server) CreateUser(ctx context.Context, in *users.CreateUserRequest) (*users.CreateUserResponse, error) {
+func (s *Server) CreateUser(ctx context.Context, in *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	model := mappers.MakeModelFromWriteData(in.Data)
 
 	user, err := s.usersUC.Create(ctx, &model)
@@ -15,14 +15,14 @@ func (s *Server) CreateUser(ctx context.Context, in *users.CreateUserRequest) (*
 		return nil, err
 	}
 
-	resp := &users.CreateUserResponse{
+	resp := &pb.CreateUserResponse{
 		User: mappers.MakeUserFromModel(*user),
 	}
 
 	return resp, nil
 }
 
-func (s *Server) UpdateUser(ctx context.Context, in *users.UpdateUserByIdRequest) (*users.UpdateUserByIdResponse, error) {
+func (s *Server) UpdateUser(ctx context.Context, in *pb.UpdateUserByIdRequest) (*pb.UpdateUserByIdResponse, error) {
 	model, err := mappers.MakeModelFromWriteDataWithId(in.Data, in.Id)
 	if err != nil {
 		return nil, err
@@ -33,14 +33,14 @@ func (s *Server) UpdateUser(ctx context.Context, in *users.UpdateUserByIdRequest
 		return nil, err
 	}
 
-	resp := &users.UpdateUserByIdResponse{
+	resp := &pb.UpdateUserByIdResponse{
 		User: mappers.MakeUserFromModel(*user),
 	}
 
 	return resp, nil
 }
 
-func (s *Server) DeleteUser(ctx context.Context, in *users.DeleteUserByIdRequest) (*users.DeleteUserByIdResponse, error) {
+func (s *Server) DeleteUser(ctx context.Context, in *pb.DeleteUserByIdRequest) (*pb.DeleteUserByIdResponse, error) {
 	id, err := uuid.Parse(in.Id)
 	if err != nil {
 		return nil, err
@@ -51,14 +51,14 @@ func (s *Server) DeleteUser(ctx context.Context, in *users.DeleteUserByIdRequest
 		return nil, err
 	}
 
-	resp := &users.DeleteUserByIdResponse{
+	resp := &pb.DeleteUserByIdResponse{
 		User: mappers.MakeUserFromModel(*model),
 	}
 
 	return resp, nil
 }
 
-func (s *Server) FindUserById(ctx context.Context, in *users.FindUserByIdRequest) (*users.FindUserByIdResponse, error) {
+func (s *Server) FindUserById(ctx context.Context, in *pb.FindUserByIdRequest) (*pb.FindUserByIdResponse, error) {
 	id, err := uuid.Parse(in.Id)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (s *Server) FindUserById(ctx context.Context, in *users.FindUserByIdRequest
 		return nil, err
 	}
 
-	resp := &users.FindUserByIdResponse{
+	resp := &pb.FindUserByIdResponse{
 		User: mappers.MakeUserFromModel(*model),
 	}
 

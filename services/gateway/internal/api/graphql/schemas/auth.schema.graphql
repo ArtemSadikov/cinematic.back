@@ -1,0 +1,31 @@
+extend type Mutation {
+    authByCredentials(input: AuthByCredentialsInput!): AuthByCredentialsResponse!
+    register(input: RegisterRequestInput!): RegisterResponse!
+    refreshToken(refreshToken: String!): RefreshTokenResponse!
+}
+
+input AuthByCredentialsInput {
+    email: String!
+    password: String!
+}
+
+type AuthByCredentialsResponse {
+    accessToken: String!
+    refreshToken: String!
+}
+
+input RegisterRequestInput {
+    email: String!
+    password: String!
+    username: String!
+}
+
+type RegisterResponse {
+    accessToken: String!
+    refreshToken: String!
+}
+
+type RefreshTokenResponse {
+    accessToken: String!
+    refreshToken: String!
+}

@@ -17,6 +17,6 @@ type UsersUseCases interface {
 type AuthUseCases interface {
 	Register(ctx context.Context, email, username, password string) (*token.Tokens, error)
 	AuthByCredentials(ctx context.Context, email, password string) (*token.Tokens, error)
-	AuthByAccessToken(ctx context.Context, token string) error
+	AuthByAccessToken(ctx context.Context, token string) (*user.User, error)
 	RefreshToken(ctx context.Context, token string) (*token.Tokens, error)
 }
