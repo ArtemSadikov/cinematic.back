@@ -1,5 +1,10 @@
-extend type Mutation {
+extend type Query {
     me: User! @isLogged
+    user(id: String!): User! @isLogged
+}
+
+extend type Mutation {
+    editProfile(input: EditProfileInput!): EditProfileResponse!
 }
 
 type UserProfile {
@@ -13,4 +18,17 @@ type User {
     createdAt: Timestamp!
     updatedAt: Timestamp!
     deletedAt: Timestamp
+}
+
+input UserProfileInput {
+    email: String!
+    username: String!
+}
+
+input EditProfileInput {
+    profile: UserProfileInput!
+}
+
+type EditProfileResponse {
+    user: User!
 }

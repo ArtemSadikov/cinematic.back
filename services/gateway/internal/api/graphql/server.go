@@ -4,8 +4,9 @@ import (
 	"cinematic.back/api/users"
 	"cinematic.back/api/users/pb"
 	"cinematic.back/services/gateway/internal/api/graphql/generated"
+	"cinematic.back/services/gateway/internal/api/graphql/loaders/user"
 	"cinematic.back/services/gateway/internal/api/graphql/resolvers"
-	"cinematic.back/services/gateway/internal/services/user"
+	uService "cinematic.back/services/gateway/internal/services/user"
 	"context"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -23,13 +24,13 @@ const endpointUrl = "/graphql"
 
 type Server struct {
 	uClient  users.Client
-	uService user.Service
+	uService uService.Service
 	handler  *handler.Server
 }
 
 func NewServer(
 	uClient users.Client,
-	uService user.Service,
+	uService uService.Service,
 ) *Server {
 	s := &Server{uClient: uClient, uService: uService}
 
@@ -84,10 +85,20 @@ func (s *Server) setDirectives(cfg *generated.Config) {
 		next graphql.Resolver,
 	) (res interface{}, err error) {
 		if _, ok := s.uService.FromIncomingCtx(ctx); ok {
-			next(ctx)
+			return next(ctx)
 		}
 
 		return nil, err
+	}
+}
+
+func (s *Server) dataloaderHandler(next http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		loader := user.NewLoader(s.uClient, s.uService)
+		ctx := user.ToOutgoingCtx(r.Context(), loader)
+
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
 	}
 }
 
@@ -102,7 +113,7 @@ func (s *Server) Start() error {
 		Debug:            true,
 	}).Handler)
 
-	h := s.authMiddleware(s.handler)
+	h := s.authMiddleware(s.dataloaderHandler(s.handler))
 
 	router.Handle("/graphiql", playground.Handler("GraphQL playground", endpointUrl))
 	router.Handle(endpointUrl, h)

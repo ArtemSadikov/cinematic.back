@@ -11,6 +11,10 @@ type UseCase struct {
 	uServices services.UserService
 }
 
+func (u UseCase) FindUsersByIds(ctx context.Context, ids ...uuid.UUID) ([]*user.User, error) {
+	return u.uServices.FindUsersByIds(ctx, ids...)
+}
+
 func (u UseCase) Create(ctx context.Context, data *user.User) (*user.User, error) {
 	if err := u.uServices.Save(ctx, data); err != nil {
 		return nil, err

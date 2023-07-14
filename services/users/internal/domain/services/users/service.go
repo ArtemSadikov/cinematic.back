@@ -14,8 +14,14 @@ type service struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) *service {
-	return &service{db: db}
+func (s *service) FindUsersByIds(ctx context.Context, ids ...uuid.UUID) ([]*user.User, error) {
+	var users []*user.User
+
+	if err := s.db.WithContext(ctx).Where(ids).Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (s *service) Save(ctx context.Context, user *user.User) error {
@@ -64,4 +70,8 @@ func (s *service) FindByEmail(ctx context.Context, email string) (*user.User, er
 	}
 
 	return &result, nil
+}
+
+func New(db *gorm.DB) *service {
+	return &service{db: db}
 }

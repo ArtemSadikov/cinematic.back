@@ -18,6 +18,34 @@ type UseCase struct {
 	tService services.TokenService
 }
 
+func (u *UseCase) ChangePassword(ctx context.Context, userId uuid.UUID, password string) (*token2.Tokens, error) {
+	auth, err := u.aService.FindUserAuthByUserID(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := crypto.ComparePassword(password, auth.Password); err == nil {
+		return nil, errors.New("same password")
+	}
+
+	pswd := crypto.HashPassword(password)
+	auth.ChangePassword(pswd)
+
+	tokenId := uuid.New()
+	tokens, err := u.tService.GenerateTokens(userId.String(), auth.PasswordID.String(), tokenId.String())
+	if err != nil {
+		return nil, err
+	}
+
+	auth.SetToken(tokens.RefreshToken, tokenId)
+
+	if err := u.aService.Save(ctx, auth); err != nil {
+		return nil, err
+	}
+
+	return &tokens, nil
+}
+
 func (u *UseCase) RefreshToken(ctx context.Context, token string) (*token2.Tokens, error) {
 	claims, err := u.tService.ValidateRefreshToken(token)
 	if err != nil {
@@ -136,6 +164,7 @@ func (u *UseCase) AuthByAccessToken(ctx context.Context, token string) (*userMod
 	if err != nil {
 		return nil, err
 	}
+
 	user, err := u.uService.FindByID(ctx, userId)
 	if err != nil {
 		return nil, err

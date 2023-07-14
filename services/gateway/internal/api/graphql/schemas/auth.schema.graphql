@@ -1,7 +1,13 @@
 extend type Mutation {
-    authByCredentials(input: AuthByCredentialsInput!): AuthByCredentialsResponse!
-    register(input: RegisterRequestInput!): RegisterResponse!
-    refreshToken(refreshToken: String!): RefreshTokenResponse!
+    authByCredentials(input: AuthByCredentialsInput!): TokensResponse!
+    register(input: RegisterRequestInput!): TokensResponse!
+    refreshToken(refreshToken: String!): TokensResponse!
+    changePassword(password: String!): TokensResponse! @isLogged
+}
+
+type TokensResponse {
+    accessToken: String!
+    refreshToken: String!
 }
 
 input AuthByCredentialsInput {
@@ -9,23 +15,8 @@ input AuthByCredentialsInput {
     password: String!
 }
 
-type AuthByCredentialsResponse {
-    accessToken: String!
-    refreshToken: String!
-}
-
 input RegisterRequestInput {
     email: String!
     password: String!
     username: String!
-}
-
-type RegisterResponse {
-    accessToken: String!
-    refreshToken: String!
-}
-
-type RefreshTokenResponse {
-    accessToken: String!
-    refreshToken: String!
 }

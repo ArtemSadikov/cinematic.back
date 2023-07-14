@@ -3,7 +3,7 @@ package main
 import (
 	"cinematic.back/api/users/pb"
 	"cinematic.back/pkg/provider/database"
-	"cinematic.back/services/users/internal/delivery/grpc"
+	"cinematic.back/services/users/internal/delivery/grpc/servers"
 	container2 "cinematic.back/services/users/internal/infrastructure/container"
 	"cinematic.back/services/users/internal/usecase"
 	"context"
@@ -18,10 +18,28 @@ func main() {
 		log.Fatalf("%e", err)
 	}
 
+	err = container.Provide(func(
+		aUseCase usecase.AuthUseCases,
+	) *servers.AuthServer {
+		return servers.NewAuthServer(aUseCase)
+	})
+	if err != nil {
+		log.Fatalf("%e", err)
+	}
+
+	err = container.Provide(func(
+		uUseCase usecase.UsersUseCases,
+	) *servers.UserServer {
+		return servers.NewUserServer(uUseCase)
+	})
+	if err != nil {
+		log.Fatalf("%e", err)
+	}
+
 	err = container.Invoke(func(
 		provider database.Provider,
-		uUseCase usecase.UsersUseCases,
-		aUseCase usecase.AuthUseCases,
+		aServer *servers.AuthServer,
+		uServer *servers.UserServer,
 	) error {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
@@ -32,7 +50,6 @@ func main() {
 
 		var errCh chan error
 
-		server := grpc.New(uUseCase, aUseCase)
 		listener, err := net.Listen("tcp", "localhost:3001")
 		if err != nil {
 			log.Fatalf("%e", err)
@@ -40,8 +57,8 @@ func main() {
 
 		grpcServer := grpc2.NewServer()
 
-		pb.RegisterUsersServiceServer(grpcServer, server)
-		pb.RegisterAuthServiceServer(grpcServer, server)
+		pb.RegisterUsersServiceServer(grpcServer, uServer)
+		pb.RegisterAuthServiceServer(grpcServer, aServer)
 
 		go func() {
 			log.Println("server is listening on 3000 port")

@@ -13,7 +13,7 @@ type User struct {
 	Profile profile.Profile `gorm:"foreignKey:UserID;references:id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Auth    *auth.UserAuth  `gorm:"foreignKey:UserID;references:id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;nullable"`
 
-	CreatedAt time.Time
+	CreatedAt time.Time `gorm:"<-create"`
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt
 }

@@ -13,6 +13,7 @@ type UserService interface {
 	FindByID(ctx context.Context, id uuid.UUID) (*user.User, error)
 	DeleteByID(ctx context.Context, id uuid.UUID) (*user.User, error)
 	FindByEmail(ctx context.Context, email string) (*user.User, error)
+	FindUsersByIds(ctx context.Context, ids ...uuid.UUID) ([]*user.User, error)
 }
 
 type AuthService interface {

@@ -12,8 +12,7 @@ message AuthByCredentialsRequest {
 }
 
 message AuthByCredentialsResponse {
-  string access_token = 1;
-  string refresh_token = 2;
+  Tokens tokens = 1;
 }
 
 message RegisterRequest {
@@ -22,8 +21,7 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-  string access_token = 1;
-  string refresh_token = 2;
+  Tokens tokens = 1;
 }
 
 message AuthByAccessTokenRequest {
@@ -39,8 +37,16 @@ message RefreshTokenRequest {
 }
 
 message RefreshTokenResponse {
-  string access_token = 1;
-  string refresh_token = 2;
+  Tokens tokens = 1;
+}
+
+message ChangePasswordRequest {
+  string user_id = 1;
+  string password = 2;
+}
+
+message ChangePasswordResponse {
+  Tokens tokens = 1;
 }
 
 service AuthService {
@@ -48,4 +54,5 @@ service AuthService {
   rpc Register(RegisterRequest) returns (RegisterResponse) {};
   rpc AuthByCredentials(AuthByCredentialsRequest) returns (AuthByCredentialsResponse) {};
   rpc AuthByAccessToken(AuthByAccessTokenRequest) returns (AuthByAccessTokenResponse) {};
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {};
 }

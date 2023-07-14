@@ -8,3 +8,8 @@ message UserCredentials {
   string email = 1;
   string password = 2;
 }
+
+message Tokens {
+  string access_token = 1;
+  string refresh_token = 2;
+}

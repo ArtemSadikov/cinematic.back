@@ -8,17 +8,40 @@ import (
 	"context"
 	"errors"
 
+	"cinematic.back/api/users/pb"
+	userLoader "cinematic.back/services/gateway/internal/api/graphql/loaders/user"
 	"cinematic.back/services/gateway/internal/api/graphql/model"
 )
 
-// Me is the resolver for the me field.
-func (r *mutationResolver) Me(ctx context.Context) (*model.User, error) {
-	usr, ok := r.uService.FromIncomingCtx(ctx)
-	if !ok {
-		return nil, errors.New("no user")
+// EditProfile is the resolver for the editProfile field.
+func (r *mutationResolver) EditProfile(ctx context.Context, input model.EditProfileInput) (*model.EditProfileResponse, error) {
+	usr, _ := r.uService.FromIncomingCtx(ctx)
+	req := &pb.UpdateUserByIdRequest{
+		Id: usr.Id.String(),
+		Data: &pb.UserWrite{
+			Email:    input.Profile.Email,
+			Username: input.Profile.Username,
+		},
 	}
 
-	return &model.User{
+	res, err := r.uClient.EditUserProfileById(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &model.EditProfileResponse{User: userLoader.TransformUser(res.User)}
+
+	return resp, nil
+}
+
+// Me is the resolver for the me field.
+func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
+	usr, ok := r.uService.FromIncomingCtx(ctx)
+	if !ok {
+		return nil, errors.New("no userLoader")
+	}
+
+	res := &model.User{
 		ID: usr.Id.String(),
 		Profile: &model.UserProfile{
 			Email:    usr.Profile.Email,
@@ -27,5 +50,12 @@ func (r *mutationResolver) Me(ctx context.Context) (*model.User, error) {
 		CreatedAt: usr.CreatedAt,
 		UpdatedAt: usr.UpdatedAt,
 		DeletedAt: usr.DeletedAt,
-	}, nil
+	}
+
+	return res, nil
+}
+
+// User is the resolver for the user field.
+func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+	return userLoader.FromIncomingCtx(ctx).GetUser(ctx, id)
 }

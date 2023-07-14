@@ -6,6 +6,15 @@ package users;
 
 option go_package = "cinematic.back/api/users/pb";
 
+service UsersService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {};
+  rpc UpdateUser(UpdateUserByIdRequest) returns (UpdateUserByIdResponse) {};
+  rpc DeleteUser(DeleteUserByIdRequest) returns (DeleteUserByIdResponse) {};
+  rpc FindUserById(FindUserByIdRequest) returns (FindUserByIdResponse) {};
+
+  rpc FindUsersByIds(FindUsersByIdsRequest) returns (FindUsersByIdsResponse) {};
+}
+
 message CreateUserRequest {
   UserWrite data = 1;
 }
@@ -39,9 +48,10 @@ message DeleteUserByIdResponse {
   User user = 1;
 }
 
-service UsersService {
-  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {};
-  rpc UpdateUser(UpdateUserByIdRequest) returns (UpdateUserByIdResponse) {};
-  rpc DeleteUser(DeleteUserByIdRequest) returns (DeleteUserByIdResponse) {};
-  rpc FindUserById(FindUserByIdRequest) returns (FindUserByIdResponse) {};
+message FindUsersByIdsRequest {
+  repeated string ids = 1;
+}
+
+message FindUsersByIdsResponse {
+  repeated User users = 1;
 }
